@@ -1,10 +1,9 @@
 // poll-command.js
-const fetch = require('node-fetch');
-
 exports.handler = async function() {
   try {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    if (!supabaseUrl || !supabaseKey) return { statusCode: 500, body: 'Missing server env vars' };
 
     // 1) select the oldest unconsumed command
     const selectUrl = `${supabaseUrl}/rest/v1/commands?select=*&consumed=eq.false&order=created_at.asc&limit=1`;
@@ -41,7 +40,7 @@ exports.handler = async function() {
 
     if (!patchResp.ok) {
       console.error('patch failed', await patchResp.text());
-      // still return the command (ESP might re-request if not consumed)
+      // still return the command
     }
 
     return { statusCode: 200, body: JSON.stringify({ cmd: cmdRow.cmd }) };
