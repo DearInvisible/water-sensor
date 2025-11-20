@@ -1,6 +1,4 @@
 // send-command.js
-const fetch = require('node-fetch');
-
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
   try {
@@ -10,6 +8,7 @@ exports.handler = async function(event) {
 
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    if (!supabaseUrl || !supabaseKey) return { statusCode: 500, body: 'Missing server env vars' };
 
     const resp = await fetch(`${supabaseUrl}/rest/v1/commands`, {
       method: 'POST',
