@@ -1,6 +1,4 @@
-// ingest.js
-const fetch = require('node-fetch');
-
+// ingest.js  — uses global fetch, no node-fetch
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -10,6 +8,9 @@ exports.handler = async function(event) {
 
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+    if (!supabaseUrl || !supabaseKey) {
+      return { statusCode: 500, body: 'Missing server env vars' };
+    }
 
     const insertBody = {
       soil: body.soil || null,
